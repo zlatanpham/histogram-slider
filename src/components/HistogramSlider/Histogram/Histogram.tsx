@@ -39,8 +39,9 @@ export class Histogram extends React.Component<HistogramProps, HistogramState> {
               alignItems: 'flex-end',
             })}
           >
-            {this.state.data.map(height => (
+            {this.state.data.map((height, index) => (
               <div
+                key={index}
                 className={css({
                   width: '2%',
                   backgroundColor: '#d8d8d8',
