@@ -37,8 +37,6 @@ export class RangeSlider extends React.Component<
     return step < this.props.step ? this.props.step : step;
   };
 
-  keyboardStep = this.getKeyboardStep();
-
   triggerEventMin = () => {
     document.addEventListener('mousemove', this.dragMin);
     document.addEventListener('mouseup', this.clearDocumentEvents);
