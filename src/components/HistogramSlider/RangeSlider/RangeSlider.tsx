@@ -32,6 +32,13 @@ export class RangeSlider extends React.Component<
     }
   }
 
+  getKeyboardStep = () => {
+    let step = Math.abs(this.props.max / 100);
+    return step < this.props.step ? this.props.step : step;
+  };
+
+  keyboardStep = this.getKeyboardStep();
+
   triggerEventMin = () => {
     document.addEventListener('mousemove', this.dragMin);
     document.addEventListener('mouseup', this.clearDocumentEvents);
@@ -57,6 +64,10 @@ export class RangeSlider extends React.Component<
 
     this.setState(prevState => {
       const [prevStateMin, prevStateMax] = prevState.value;
+      if (clientX <= minX) {
+        return { value: [this.props.min, prevStateMax] };
+      }
+
       const delta = (min - prevStateMin) / this.props.step;
       let addition = 0;
       if (Math.abs(delta) >= 1) {
@@ -77,27 +88,6 @@ export class RangeSlider extends React.Component<
     }
   };
 
-  handleDrag = (e: MouseEvent) => {
-    const { clientX } = e;
-    const { maxX, minX, width } = this.getCordsProperties();
-    const percent = clientX > maxX ? 1 : (clientX - minX) / width;
-    let max = percent * this.range;
-
-    this.setState((prevState: RangeSliderState) => {
-      const [prevStateMin, prevStateMax] = prevState.value;
-      const delta = (max - prevStateMax) / this.props.step;
-      let addition = 0;
-      if (Math.abs(delta) >= 1) {
-        addition = Math.floor(delta / this.props.step) * this.props.step;
-      }
-      max = prevStateMax + addition;
-      if (max - this.props.distance < prevStateMin) {
-        max = prevStateMin + this.props.distance;
-      }
-      return { value: [prevStateMin, max] };
-    }, this.callback);
-  };
-
   dragMax = (e: MouseEvent) => {
     const { clientX } = e;
     const { maxX, minX, width } = this.getCordsProperties();
@@ -106,6 +96,9 @@ export class RangeSlider extends React.Component<
 
     this.setState((prevState: RangeSliderState) => {
       const [prevStateMin, prevStateMax] = prevState.value;
+      if (clientX >= maxX) {
+        return { value: [prevStateMin, this.props.max] };
+      }
       const delta = (max - prevStateMax) / this.props.step;
       let addition = 0;
       if (Math.abs(delta) >= 1) {
@@ -126,16 +119,71 @@ export class RangeSlider extends React.Component<
   };
 
   handleMinKeydown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    console.log(e.key);
+    const { key } = e;
+
+    if (key === 'Enter' || key === ' ') {
+      e.preventDefault();
+      return;
+    }
+
+    const { distance, min } = this.props;
+    if (key === 'ArrowRight') {
+      this.setState((prevState: RangeSliderState) => {
+        const [prevStateMin, prevStateMax] = prevState.value;
+        const nextStateMin =
+          prevStateMin + distance >= prevStateMax
+            ? prevStateMax - distance
+            : prevStateMin + this.getKeyboardStep();
+        return { value: [nextStateMin, prevStateMax] };
+      }, this.callback);
+    } else if (key === 'ArrowLeft') {
+      this.setState((prevState: RangeSliderState) => {
+        const [prevStateMin, prevStateMax] = prevState.value;
+        const nextStateMin =
+          prevStateMin <= min ? min : prevStateMin - this.getKeyboardStep();
+        return { value: [nextStateMin, prevStateMax] };
+      }, this.callback);
+    }
   };
 
   handleMaxKeydown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    console.log(e.key);
+    const { key } = e;
+
+    if (key === 'Enter' || key === ' ') {
+      e.preventDefault();
+      return;
+    }
+
+    const { distance, max } = this.props;
+    if (key === 'ArrowRight') {
+      this.setState((prevState: RangeSliderState) => {
+        const [prevStateMin, prevStateMax] = prevState.value;
+        const nextStateMax =
+          prevStateMax >= max ? max : prevStateMax + this.getKeyboardStep();
+        return { value: [prevStateMin, nextStateMax] };
+      }, this.callback);
+    } else if (key === 'ArrowLeft') {
+      this.setState((prevState: RangeSliderState) => {
+        const [prevStateMin, prevStateMax] = prevState.value;
+        const nextStateMax =
+          prevStateMax - distance <= prevStateMin
+            ? prevStateMin + distance
+            : prevStateMax - this.getKeyboardStep();
+        return { value: [prevStateMin, nextStateMax] };
+      }, this.callback);
+    }
   };
 
   handleBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const point = e.clientX;
-    const { minX, width } = this.getCordsProperties();
+    let point = e.clientX;
+    const { minX, maxX, width } = this.getCordsProperties();
+
+    if (point < minX) {
+      point = minX;
+    } else if (point > maxX) {
+      point = maxX;
+    }
+
     const range = Math.round(((point - minX) * this.range) / width);
 
     this.setState((prevState: RangeSliderState) => {
@@ -211,6 +259,7 @@ export class RangeSlider extends React.Component<
                     boxShadow: 'rgb(235, 235, 235) 0px 2px 2px',
                     border: '1px solid #d9d9d9',
                   })}
+                  onClick={e => e.preventDefault()}
                   role="slider"
                   tabIndex={0}
                   aria-valuenow={min}
@@ -232,6 +281,7 @@ export class RangeSlider extends React.Component<
                     boxShadow: 'rgb(235, 235, 235) 0px 2px 2px',
                     border: '1px solid #d9d9d9',
                   })}
+                  onClick={e => e.preventDefault()}
                   role="slider"
                   tabIndex={0}
                   aria-valuenow={max}

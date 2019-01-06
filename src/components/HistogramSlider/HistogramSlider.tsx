@@ -19,7 +19,7 @@ export class HistogramSlider extends React.Component<HistogramSliderProps> {
               max={20000}
               step={2}
               value={[0, 20000]}
-              distance={10000}
+              distance={1200}
             />
           </div>
         )}
