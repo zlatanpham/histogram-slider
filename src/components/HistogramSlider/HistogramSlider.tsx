@@ -29,9 +29,22 @@ export class HistogramSlider extends React.Component<
 
   timeout: number = 0;
 
+  componentWillReceiveProps(nextProps: HistogramSliderProps) {
+    const { value } = nextProps;
+    if (value !== this.props.value) {
+      this.setState({ value });
+    }
+  }
+
   reset = (e: React.MouseEvent) => {
     e.preventDefault();
-    this.setState({ value: [this.props.min, this.props.max] });
+    this.setState({ value: [this.props.min, this.props.max] }, () => {
+      if (typeof this.props.onApply === 'function') {
+        this.props.onApply(this.state.value);
+      } else if (typeof this.props.onChange === 'function') {
+        this.props.onChange(this.state.value);
+      }
+    });
   };
 
   isDisabled = () => {
