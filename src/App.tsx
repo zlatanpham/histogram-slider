@@ -7,7 +7,20 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <HistogramSlider data={histogramData} />
+        <HistogramSlider
+          min={162}
+          max={14000}
+          step={1}
+          value={[162, 14000]}
+          distance={1000}
+          data={histogramData}
+          onChange={(value: [number, number]) => {
+            console.log(value);
+          }}
+          onApply={(value: [number, number]) => {
+            console.log(value);
+          }}
+        />
       </div>
     );
   }

@@ -288,10 +288,6 @@ export class RangeSlider extends React.Component<
                 />
               </div>
             </div>
-
-            <div className={css({ marginTop: '25px', fontSize: '14px' })}>
-              {minState} : {maxState}
-            </div>
           </div>
         )}
       </ClassNames>
