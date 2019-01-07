@@ -68,7 +68,7 @@ export class RangeSlider extends React.Component<
         return { value: [this.props.min, prevStateMax] };
       }
 
-      const delta = (min - prevStateMin) / this.props.step;
+      const delta = (min - prevStateMin + this.props.min) / this.props.step;
       let addition = 0;
       if (Math.abs(delta) >= 1) {
         addition = Math.floor(delta / this.props.step) * this.props.step;
@@ -99,7 +99,7 @@ export class RangeSlider extends React.Component<
       if (clientX >= maxX) {
         return { value: [prevStateMin, this.props.max] };
       }
-      const delta = (max - prevStateMax) / this.props.step;
+      const delta = (max - prevStateMax + this.props.min) / this.props.step;
       let addition = 0;
       if (Math.abs(delta) >= 1) {
         addition = Math.ceil(delta / this.props.step) * this.props.step;
@@ -177,24 +177,20 @@ export class RangeSlider extends React.Component<
   handleBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
     let point = e.clientX;
     const { minX, maxX, width } = this.getCordsProperties();
-
     if (point < minX) {
       point = minX;
     } else if (point > maxX) {
       point = maxX;
     }
-
-    const range = Math.round(((point - minX) * this.range) / width);
-
+    const range =
+      Math.round(((point - minX) * this.range) / width) + this.props.min;
     this.setState((prevState: RangeSliderState) => {
       const [prevStateMin, prevStateMax] = prevState.value;
-
       if (range <= prevStateMin) {
         return { value: [range, prevStateMax] };
       } else if (range >= prevStateMax) {
         return { value: [prevStateMin, range] };
       }
-
       if (Math.abs(range - prevStateMin) >= Math.abs(range - prevStateMax)) {
         const nextMaxState =
           range - prevStateMin < this.props.distance
@@ -212,9 +208,10 @@ export class RangeSlider extends React.Component<
   };
 
   render() {
-    const [min, max] = this.state.value;
-    const right = 100 - (max * 100) / this.range;
-    const left = (min * 100) / this.range;
+    const [minState, maxState] = this.state.value;
+    const { min, max } = this.props;
+    const right = 100 - ((maxState - min) * 100) / this.range;
+    const left = ((minState - min) * 100) / this.range;
 
     return (
       <ClassNames>
@@ -262,9 +259,9 @@ export class RangeSlider extends React.Component<
                   onClick={e => e.preventDefault()}
                   role="slider"
                   tabIndex={0}
-                  aria-valuenow={min}
-                  aria-valuemax={this.props.max}
-                  aria-valuemin={this.props.min}
+                  aria-valuenow={minState}
+                  aria-valuemax={max}
+                  aria-valuemin={min}
                   aria-disabled="false"
                   onMouseDown={this.triggerEventMin}
                   onKeyDown={this.handleMinKeydown}
@@ -284,9 +281,9 @@ export class RangeSlider extends React.Component<
                   onClick={e => e.preventDefault()}
                   role="slider"
                   tabIndex={0}
-                  aria-valuenow={max}
-                  aria-valuemax={this.props.max}
-                  aria-valuemin={this.props.min}
+                  aria-valuenow={maxState}
+                  aria-valuemax={max}
+                  aria-valuemin={min}
                   aria-disabled="false"
                   onKeyDown={this.handleMaxKeydown}
                   onMouseDown={this.triggerEventMax}
@@ -294,8 +291,8 @@ export class RangeSlider extends React.Component<
               </div>
             </div>
 
-            <div className={css({ marginTop: '40px' })}>
-              {min} : {max}
+            <div className={css({ marginTop: '25px', fontSize: '14px' })}>
+              {minState} : {maxState}
             </div>
           </div>
         )}

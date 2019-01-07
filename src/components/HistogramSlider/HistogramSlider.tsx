@@ -15,10 +15,10 @@ export class HistogramSlider extends React.Component<HistogramSliderProps> {
           <div className={css({ maxWidth: '240px', padding: '10px' })}>
             <Histogram data={this.props.data} />
             <RangeSlider
-              min={0}
+              min={10000}
               max={20000}
               step={2}
-              value={[0, 20000]}
+              value={[10000, 20000]}
               distance={1200}
             />
           </div>
