@@ -34,9 +34,9 @@ export class Histogram extends React.Component<HistogramProps, HistogramState> {
       const heightPxPerUnit = this.props.maxHeightPx! / max;
       const heightData = data.map(v => Math.round(heightPxPerUnit * v));
 
-      this.state = {
+      this.setState({
         data: heightData,
-      };
+      });
     }
   }
 

@@ -69,7 +69,7 @@ export class FilterMenuItem extends React.Component<FilterMenuItemProps> {
 
   getButtonActiveStatus = () => {
     if (typeof this.props.getButtonActiveStatus === 'function') {
-      return this.props.getButtonActiveStatus(this.state.isOpen);
+      return this.props.getButtonActiveStatus(this.getIsOpen());
     }
 
     return this.state.isOpen;

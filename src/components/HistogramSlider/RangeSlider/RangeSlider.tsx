@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClassNames, css } from '@emotion/core';
+import { ClassNames } from '@emotion/core';
 
 interface RangeSliderProps {
   min: number;
@@ -26,9 +26,13 @@ export class RangeSlider extends React.Component<
   range = this.props.max - this.props.min;
 
   componentWillReceiveProps(nextProps: RangeSliderProps) {
-    const { value } = nextProps;
+    const { value, min, max } = nextProps;
     if (value !== this.props.value) {
       this.setState({ value });
+    }
+
+    if (min !== this.props.min || max !== this.props.max) {
+      this.range = max - min;
     }
   }
 

@@ -3,6 +3,9 @@ import { ClassNames } from '@emotion/core';
 
 export interface DataModel {
   data: number[];
+  min: number;
+  max: number;
+  step: number;
 }
 
 class FakeSearchBar extends React.Component<
@@ -24,6 +27,7 @@ class FakeSearchBar extends React.Component<
 
     window.setTimeout(() => {
       if (typeof this.props.onChange === 'function') {
+        const min = Math.floor(Math.random() * 400) + 60;
         const data = {
           data: Array.from({ length: 50 }, (v, i) => {
             if (i < 15) {
@@ -36,7 +40,11 @@ class FakeSearchBar extends React.Component<
 
             return Math.floor(Math.random() * 700);
           }),
+          max: min + Math.floor(Math.random() * 5000) + 5000,
+          step: 1,
+          min,
         };
+
         this.props.onChange(data);
       }
     }, 500);

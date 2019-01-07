@@ -18,6 +18,9 @@ class App extends Component<any, AppState> {
     showOverlay: false,
     data: {
       data: histogramData,
+      min: 162,
+      max: 14000,
+      step: 1,
     },
   };
 
@@ -26,11 +29,11 @@ class App extends Component<any, AppState> {
   getButtonText = () => {
     const [min, max] = this.state.value;
 
-    if (min === 162 && max < 14000) {
+    if (min === this.state.data.min && max < this.state.data.max) {
       return `Up to $${max} AUD`;
-    } else if (min > 162 && max === 14000) {
+    } else if (min > this.state.data.min && max === this.state.data.max) {
       return `$${min}+ AUD`;
-    } else if (min > 162 && max < 14000) {
+    } else if (min > this.state.data.min && max < this.state.data.max) {
       return `$${min} AUD - $${max} AUD`;
     }
 
@@ -39,7 +42,7 @@ class App extends Component<any, AppState> {
 
   getButtonActiveStatus = (isOpen: boolean) => {
     const [min, max] = this.state.value;
-    if (min !== 162 || max !== 14000) {
+    if (min !== this.state.data.min || max !== this.state.data.max) {
       return true;
     }
     return isOpen;
@@ -47,7 +50,7 @@ class App extends Component<any, AppState> {
 
   handleChange = (data: DataModel) => {
     console.log(data);
-    this.setState({ data });
+    this.setState({ data, value: [data.min, data.max] });
   };
 
   render() {
@@ -64,9 +67,9 @@ class App extends Component<any, AppState> {
             >
               <FakeSearchBar onChange={this.handleChange} />
               <HistogramSlider
-                min={162}
-                max={14000}
-                step={1}
+                min={this.state.data.min}
+                max={this.state.data.max}
+                step={this.state.data.step}
                 value={this.state.value}
                 distance={1000}
                 data={this.state.data.data}
@@ -110,9 +113,9 @@ class App extends Component<any, AppState> {
               >
                 {({ close }) => (
                   <HistogramSlider
-                    min={162}
-                    max={14000}
-                    step={1}
+                    min={this.state.data.min}
+                    max={this.state.data.max}
+                    step={this.state.data.step}
                     value={this.state.value}
                     distance={1000}
                     data={this.state.data.data}
