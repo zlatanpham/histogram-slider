@@ -95,7 +95,13 @@ export class HistogramSlider extends React.Component<
     return (
       <ClassNames>
         {({ css }) => (
-          <div className={css({ maxWidth: '240px', padding: '10px' })}>
+          <div
+            className={css({
+              maxWidth: '240px',
+              padding: '10px',
+              boxSizing: 'border-box',
+            })}
+          >
             <Histogram data={this.props.data} />
             <RangeSlider
               {...rangeSliderProps}

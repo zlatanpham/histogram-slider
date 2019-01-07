@@ -8,60 +8,54 @@ interface StateAndHelpersType {
   isOpen: boolean;
 }
 
-type Partial<T> = { [P in keyof T]?: T[P] };
-
 interface FilterMenuItemProps {
   isOpen?: boolean;
   getButtonText?: (isOpen: boolean) => string;
   getButtonActiveStatus?: (isOpen: boolean) => boolean;
   children: (arg: StateAndHelpersType) => JSX.Element;
+  onToggle?: (state: boolean, stateAndHelpers: StateAndHelpersType) => void;
 }
 
 interface FilterMenuItemState {
   isOpen: boolean;
 }
-
-type StateToSetType =
-  | ((prevState: FilterMenuItemState) => Partial<FilterMenuItemState>)
-  | Partial<FilterMenuItemState>;
-
 export class FilterMenuItem extends React.Component<FilterMenuItemProps> {
   state: FilterMenuItemState = {
     isOpen: false,
   };
 
-  constructor(props: FilterMenuItemProps) {
-    super(props);
-  }
-
-  static defaultProps = {
-    stateReducer: (
-      state: FilterMenuItemState,
-      stateToSet: FilterMenuItemState,
-    ) => stateToSet,
+  getIsOpen = (
+    state: FilterMenuItemState = this.state,
+    props: FilterMenuItemProps = this.props,
+  ): boolean => {
+    return props.isOpen !== undefined ? props.isOpen : state.isOpen;
   };
 
-  toggle = () => {
-    this.setState((prevState: FilterMenuItemState) => ({
-      isOpen: !prevState.isOpen,
-      active: !prevState.isOpen,
-    }));
+  isOnControlled = (): boolean => {
+    return this.props.isOpen !== undefined;
   };
 
-  open = () => {
-    this.setState({ isOpen: true });
+  setIsOpenState = (state = !this.getIsOpen()) => {
+    const cb =
+      this.getIsOpen() === state
+        ? () => {}
+        : () => {
+            typeof this.props.onToggle === 'function' &&
+              this.props.onToggle(state, this.getStateAndHelpers());
+          };
+    this.setState({ isOpen: state }, cb);
   };
 
-  close = () => {
-    this.setState({ isOpen: false });
-  };
+  setIsOpenOn = this.setIsOpenState.bind(this, true);
+  setIsOpenOff = this.setIsOpenState.bind(this, false);
+  toggle = this.setIsOpenState.bind(this, undefined);
 
   getStateAndHelpers(): StateAndHelpersType {
     return {
       toggle: this.toggle,
-      open: this.open,
-      close: this.close,
-      isOpen: this.state.isOpen,
+      open: this.setIsOpenOn,
+      close: this.setIsOpenOff,
+      isOpen: this.getIsOpen(),
     };
   }
 
@@ -70,7 +64,7 @@ export class FilterMenuItem extends React.Component<FilterMenuItemProps> {
       return this.props.getButtonText(this.state.isOpen);
     }
 
-    return 'My Buttoon';
+    return 'My Button';
   };
 
   getButtonActiveStatus = () => {
@@ -96,7 +90,7 @@ export class FilterMenuItem extends React.Component<FilterMenuItemProps> {
             >
               {this.getButtonText()}
             </button>
-            {this.state.isOpen && (
+            {this.getIsOpen() && (
               <div
                 className={css({
                   position: 'absolute',

@@ -4,17 +4,24 @@ import { FilterMenuItem } from './components/FilterMenuItem';
 import './App.css';
 import { histogramData } from './sampleData';
 import { ClassNames } from '@emotion/core';
+import FakeSearchBar, { DataModel } from './components/FakeSearchBar';
 
 interface AppState {
   value: [number, number];
-  show: boolean;
+  showOverlay: boolean;
+  data: DataModel;
 }
 
 class App extends Component<any, AppState> {
   state: AppState = {
     value: [162, 14000],
-    show: false,
+    showOverlay: false,
+    data: {
+      data: histogramData,
+    },
   };
+
+  storedValue: undefined | [number, number];
 
   getButtonText = () => {
     const [min, max] = this.state.value;
@@ -38,11 +45,9 @@ class App extends Component<any, AppState> {
     return isOpen;
   };
 
-  toggleShow = (e: React.MouseEvent) => {
-    e.preventDefault();
-    this.setState(prevState => ({
-      show: !prevState.show,
-    }));
+  handleChange = (data: DataModel) => {
+    console.log(data);
+    this.setState({ data });
   };
 
   render() {
@@ -57,21 +62,49 @@ class App extends Component<any, AppState> {
                 borderRight: '1px solid #d9d9d9',
               })}
             >
+              <FakeSearchBar onChange={this.handleChange} />
               <HistogramSlider
                 min={162}
                 max={14000}
                 step={1}
                 value={this.state.value}
                 distance={1000}
-                data={histogramData}
+                data={this.state.data.data}
                 onChange={(value: [number, number]) => {
                   this.setState({ value });
-                  console.log(value);
                 }}
               />
             </div>
-            <div className={css({ padding: '20px' })}>
+            {this.state.showOverlay && (
+              <div
+                className={css({
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0,0,0,0.3)',
+                })}
+                onClick={() => {
+                  this.setState({ showOverlay: false }, () => {
+                    if (
+                      this.storedValue &&
+                      (this.storedValue[0] !== this.state.value[0] ||
+                        this.storedValue[1] !== this.state.value[1])
+                    ) {
+                      console.log('setState');
+                      this.setState({ value: this.storedValue });
+                    }
+                  });
+                }}
+              />
+            )}
+            <div className={css({ padding: '20px', position: 'relative' })}>
               <FilterMenuItem
+                onToggle={(state, stateAndHelpers) => {
+                  this.setState({ showOverlay: state });
+                }}
+                isOpen={this.state.showOverlay}
                 getButtonText={this.getButtonText}
                 getButtonActiveStatus={this.getButtonActiveStatus}
               >
@@ -82,9 +115,12 @@ class App extends Component<any, AppState> {
                     step={1}
                     value={this.state.value}
                     distance={1000}
-                    data={histogramData}
+                    data={this.state.data.data}
+                    onChange={(value: [number, number]) => {
+                      this.storedValue = value;
+                    }}
                     onApply={(value: [number, number]) => {
-                      this.setState({ value }, () => {
+                      this.setState({ value, showOverlay: false }, () => {
                         close();
                       });
                     }}

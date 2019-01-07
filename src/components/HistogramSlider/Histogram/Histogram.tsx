@@ -28,6 +28,18 @@ export class Histogram extends React.Component<HistogramProps, HistogramState> {
     };
   }
 
+  componentWillReceiveProps({ data }: HistogramProps) {
+    if (data !== this.props.data) {
+      const max = Math.max(...data);
+      const heightPxPerUnit = this.props.maxHeightPx! / max;
+      const heightData = data.map(v => Math.round(heightPxPerUnit * v));
+
+      this.state = {
+        data: heightData,
+      };
+    }
+  }
+
   render() {
     return (
       <ClassNames>
