@@ -37,7 +37,7 @@ export class RangeSlider extends React.Component<
   }
 
   getKeyboardStep = () => {
-    let step = Math.abs(this.props.max / 100);
+    let step = Math.floor(this.props.max / 100);
     return step < this.props.step ? this.props.step : step;
   };
 

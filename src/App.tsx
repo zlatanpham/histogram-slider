@@ -21,6 +21,7 @@ class App extends Component<any, AppState> {
       min: 162,
       max: 14000,
       step: 1,
+      distance: 1200,
     },
   };
 
@@ -49,8 +50,9 @@ class App extends Component<any, AppState> {
   };
 
   handleChange = (data: DataModel) => {
-    console.log(data);
-    this.setState({ data, value: [data.min, data.max] });
+    this.setState({ data, value: [data.min, data.max] }, () => {
+      this.storedValue = undefined;
+    });
   };
 
   render() {
@@ -71,7 +73,7 @@ class App extends Component<any, AppState> {
                 max={this.state.data.max}
                 step={this.state.data.step}
                 value={this.state.value}
-                distance={1000}
+                distance={this.state.data.distance}
                 data={this.state.data.data}
                 onChange={(value: [number, number]) => {
                   this.setState({ value });
@@ -117,7 +119,7 @@ class App extends Component<any, AppState> {
                     max={this.state.data.max}
                     step={this.state.data.step}
                     value={this.state.value}
-                    distance={1000}
+                    distance={this.state.data.distance}
                     data={this.state.data.data}
                     onChange={(value: [number, number]) => {
                       this.storedValue = value;

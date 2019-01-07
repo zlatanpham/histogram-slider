@@ -6,6 +6,7 @@ export interface DataModel {
   min: number;
   max: number;
   step: number;
+  distance: number;
 }
 
 class FakeSearchBar extends React.Component<
@@ -28,6 +29,8 @@ class FakeSearchBar extends React.Component<
     window.setTimeout(() => {
       if (typeof this.props.onChange === 'function') {
         const min = Math.floor(Math.random() * 400) + 60;
+        const max = min + Math.floor(Math.random() * 5000) + 5000;
+        const distance = Math.floor((max - min) / 14);
         const data = {
           data: Array.from({ length: 50 }, (v, i) => {
             if (i < 15) {
@@ -40,8 +43,9 @@ class FakeSearchBar extends React.Component<
 
             return Math.floor(Math.random() * 700);
           }),
-          max: min + Math.floor(Math.random() * 5000) + 5000,
           step: 1,
+          distance,
+          max,
           min,
         };
 
