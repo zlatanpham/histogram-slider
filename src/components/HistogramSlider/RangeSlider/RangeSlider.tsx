@@ -41,14 +41,26 @@ export class RangeSlider extends React.Component<
     return step < this.props.step ? this.props.step : step;
   };
 
-  triggerEventMin = () => {
-    document.addEventListener('mousemove', this.dragMin);
+  triggerMouseMin = () => {
+    document.addEventListener('mousemove', this.mouseMoveMin);
     document.addEventListener('mouseup', this.clearDocumentEvents);
   };
 
-  triggerEventMax = () => {
-    document.addEventListener('mousemove', this.dragMax);
+  triggerMouseMax = () => {
+    document.addEventListener('mousemove', this.mouseMoveMax);
     document.addEventListener('mouseup', this.clearDocumentEvents);
+  };
+
+  triggerTouchMin = () => {
+    document.addEventListener('touchmove', this.touchMoveMin);
+    document.addEventListener('touchend', this.clearDocumentEvents);
+    document.addEventListener('touchcancel', this.clearDocumentEvents);
+  };
+
+  triggerTouchMax = () => {
+    document.addEventListener('touchmove', this.touchMoveMax);
+    document.addEventListener('touchend', this.clearDocumentEvents);
+    document.addEventListener('touchcancel', this.clearDocumentEvents);
   };
 
   getCordsProperties = () => {
@@ -57,8 +69,27 @@ export class RangeSlider extends React.Component<
     return { minX: x, maxX: x + width, width };
   };
 
-  dragMin = (e: MouseEvent) => {
+  touchMoveMax = (e: TouchEvent) => {
+    const { clientX } = e.changedTouches[0];
+    this.dragMax(clientX);
+  };
+
+  mouseMoveMax = (e: MouseEvent) => {
     const { clientX } = e;
+    this.dragMax(clientX);
+  };
+
+  touchMoveMin = (e: TouchEvent) => {
+    const { clientX } = e.changedTouches[0];
+    this.dragMin(clientX);
+  };
+
+  mouseMoveMin = (e: MouseEvent) => {
+    const { clientX } = e;
+    this.dragMin(clientX);
+  };
+
+  dragMin = (clientX: number) => {
     const { minX, width } = this.getCordsProperties();
 
     const percent = clientX < minX ? 0 : (clientX - minX) / width;
@@ -83,15 +114,7 @@ export class RangeSlider extends React.Component<
     }, this.callback);
   };
 
-  callback = () => {
-    if (typeof this.props.onChange === 'function') {
-      const { value } = this.state;
-      this.props.onChange(value);
-    }
-  };
-
-  dragMax = (e: MouseEvent) => {
-    const { clientX } = e;
+  dragMax = (clientX: number) => {
     const { maxX, minX, width } = this.getCordsProperties();
     const percent = clientX > maxX ? 1 : (clientX - minX) / width;
     let max = percent * this.range;
@@ -114,10 +137,21 @@ export class RangeSlider extends React.Component<
     }, this.callback);
   };
 
+  callback = () => {
+    if (typeof this.props.onChange === 'function') {
+      const { value } = this.state;
+      this.props.onChange(value);
+    }
+  };
+
   clearDocumentEvents = () => {
     document.removeEventListener('mouseup', this.clearDocumentEvents);
-    document.removeEventListener('mousemove', this.dragMin);
-    document.removeEventListener('mousemove', this.dragMax);
+    document.removeEventListener('mousemove', this.mouseMoveMin);
+    document.removeEventListener('mousemove', this.mouseMoveMax);
+    document.removeEventListener('touchmove', this.touchMoveMin);
+    document.removeEventListener('touchmove', this.touchMoveMax);
+    document.removeEventListener('touchend', this.clearDocumentEvents);
+    document.removeEventListener('touchcancel', this.clearDocumentEvents);
   };
 
   handleMinKeydown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -265,8 +299,9 @@ export class RangeSlider extends React.Component<
                   aria-valuemax={max}
                   aria-valuemin={min}
                   aria-disabled="false"
-                  onMouseDown={this.triggerEventMin}
+                  onMouseDown={this.triggerMouseMin}
                   onKeyDown={this.handleMinKeydown}
+                  onTouchStart={this.triggerTouchMin}
                 />
                 <Button
                   className={css({
@@ -288,7 +323,8 @@ export class RangeSlider extends React.Component<
                   aria-valuemin={min}
                   aria-disabled="false"
                   onKeyDown={this.handleMaxKeydown}
-                  onMouseDown={this.triggerEventMax}
+                  onMouseDown={this.triggerMouseMax}
+                  onTouchStart={this.triggerTouchMax}
                 />
               </div>
             </div>
