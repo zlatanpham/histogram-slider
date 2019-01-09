@@ -19,7 +19,7 @@ interface HistogramState {
 
 export class Histogram extends React.Component<HistogramProps, HistogramState> {
   static defaultProps = {
-    maxHeightPx: 26,
+    maxHeightPx: 20,
   };
 
   constructor(props: HistogramProps) {
@@ -123,7 +123,7 @@ export class Histogram extends React.Component<HistogramProps, HistogramState> {
                     mask={`url(#${this.mask2})`}
                     x={index}
                     y={maxHeightPx! - height}
-                    width={1.2}
+                    width="1.2"
                     stroke-width="0"
                     height={height}
                     fill={colors.out}
@@ -132,7 +132,7 @@ export class Histogram extends React.Component<HistogramProps, HistogramState> {
                     mask={`url(#${this.mask1})`}
                     x={index}
                     y={maxHeightPx! - height}
-                    width="1.15"
+                    width="1.2"
                     stroke-width="0"
                     fill={colors.in}
                     height={height}

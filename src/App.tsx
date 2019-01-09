@@ -70,8 +70,8 @@ class App extends Component<any, AppState> {
               <FakeSearchBar onChange={this.handleChange} />
               <HistogramSlider
                 colors={{
-                  in: 'orange',
-                  out: 'blue',
+                  in: '#D7D8D8',
+                  out: '#EEEEEE',
                 }}
                 min={this.state.data.min}
                 max={this.state.data.max}
@@ -120,8 +120,8 @@ class App extends Component<any, AppState> {
                 {({ close }) => (
                   <HistogramSlider
                     colors={{
-                      in: 'red',
-                      out: 'yellow',
+                      in: '#99ccc7',
+                      out: '#cceae8',
                     }}
                     min={this.state.data.min}
                     max={this.state.data.max}

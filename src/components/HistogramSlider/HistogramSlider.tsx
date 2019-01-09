@@ -114,11 +114,13 @@ export class HistogramSlider extends React.Component<
               min={this.props.min}
               max={this.props.max}
             />
-            <RangeSlider
-              {...rangeSliderProps}
-              value={this.state.value}
-              onChange={this.handleSliderChange}
-            />
+            <div className={css({ marginTop: '-5px' })}>
+              <RangeSlider
+                {...rangeSliderProps}
+                value={this.state.value}
+                onChange={this.handleSliderChange}
+              />
+            </div>
             <div className={css({ marginTop: '20px' })}>
               <div
                 className={css({
