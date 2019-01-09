@@ -69,6 +69,10 @@ class App extends Component<any, AppState> {
             >
               <FakeSearchBar onChange={this.handleChange} />
               <HistogramSlider
+                colors={{
+                  in: 'orange',
+                  out: 'blue',
+                }}
                 min={this.state.data.min}
                 max={this.state.data.max}
                 step={this.state.data.step}
@@ -106,7 +110,7 @@ class App extends Component<any, AppState> {
             )}
             <div className={css({ padding: '20px', position: 'relative' })}>
               <FilterMenuItem
-                onToggle={(state, stateAndHelpers) => {
+                onToggle={state => {
                   this.setState({ showOverlay: state });
                 }}
                 isOpen={this.state.showOverlay}
@@ -115,6 +119,10 @@ class App extends Component<any, AppState> {
               >
                 {({ close }) => (
                   <HistogramSlider
+                    colors={{
+                      in: 'red',
+                      out: 'yellow',
+                    }}
                     min={this.state.data.min}
                     max={this.state.data.max}
                     step={this.state.data.step}

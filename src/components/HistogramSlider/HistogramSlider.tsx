@@ -11,6 +11,10 @@ interface HistogramSliderProps {
   step: number;
   distance: number;
   debounceDelay?: number;
+  colors: {
+    in: string;
+    out: string;
+  };
   onApply?: (value: [number, number]) => void;
   onChange?: (value: [number, number]) => void;
 }
@@ -98,11 +102,13 @@ export class HistogramSlider extends React.Component<
           <div
             className={css({
               maxWidth: '240px',
+              minWidth: '240px',
               padding: '10px',
               boxSizing: 'border-box',
             })}
           >
             <Histogram
+              colors={this.props.colors}
               data={this.props.data}
               value={this.state.value}
               min={this.props.min}

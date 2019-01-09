@@ -8,6 +8,10 @@ interface RangeSliderProps {
   value: [number, number];
   distance: number;
   onChange?: (value: [number, number]) => void;
+  colors: {
+    in: string;
+    out: string;
+  };
 }
 
 interface RangeSliderState {
@@ -245,7 +249,7 @@ export class RangeSlider extends React.Component<
 
   render() {
     const [minState, maxState] = this.state.value;
-    const { min, max } = this.props;
+    const { min, max, colors } = this.props;
     const right = 100 - ((maxState - min) * 100) / this.range;
     const left = ((minState - min) * 100) / this.range;
 
@@ -262,7 +266,7 @@ export class RangeSlider extends React.Component<
                   width: '100%',
                   height: '4px',
                   borderRadius: '999px',
-                  backgroundColor: 'yellow',
+                  backgroundColor: colors.out,
                 })}
                 onClick={this.handleBarClick}
               />
@@ -272,7 +276,7 @@ export class RangeSlider extends React.Component<
                   top: '0px',
                   height: '4px',
                   borderRadius: '999px',
-                  backgroundColor: 'red',
+                  backgroundColor: colors.in,
                 })}
                 onClick={this.handleBarClick}
                 style={{
