@@ -262,7 +262,7 @@ export class RangeSlider extends React.Component<
                   width: '100%',
                   height: '4px',
                   borderRadius: '999px',
-                  backgroundColor: '#d8d8d8',
+                  backgroundColor: 'yellow',
                 })}
                 onClick={this.handleBarClick}
               />
@@ -272,7 +272,7 @@ export class RangeSlider extends React.Component<
                   top: '0px',
                   height: '4px',
                   borderRadius: '999px',
-                  backgroundColor: '#d8d8d8',
+                  backgroundColor: 'red',
                 })}
                 onClick={this.handleBarClick}
                 style={{

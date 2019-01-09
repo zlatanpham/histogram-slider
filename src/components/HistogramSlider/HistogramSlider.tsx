@@ -102,7 +102,12 @@ export class HistogramSlider extends React.Component<
               boxSizing: 'border-box',
             })}
           >
-            <Histogram data={this.props.data} />
+            <Histogram
+              data={this.props.data}
+              value={this.state.value}
+              min={this.props.min}
+              max={this.props.max}
+            />
             <RangeSlider
               {...rangeSliderProps}
               value={this.state.value}
